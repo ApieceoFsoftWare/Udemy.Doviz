@@ -76,5 +76,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Udemy.Doviz.Core\Udemy.Doviz.Core.csproj">
+      <Project>{261642f0-5d68-48fb-92e8-17297cd6a364}</Project>
+      <Name>Udemy.Doviz.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Udemy.Doviz.Entities\Udemy.Doviz.Entities.csproj">
+      <Project>{b242e70c-577f-488c-b91d-e59db437c114}</Project>
+      <Name>Udemy.Doviz.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
