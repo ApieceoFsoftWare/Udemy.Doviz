@@ -11,6 +11,6 @@ namespace Udemy.Doviz.Entities
         public Guid ID { get; set; }
         public string Code { get; set; }
         public string Tanim { get; set; }
-        public Decimal UyariLimit { get; set; }
+        public decimal UyariLimit { get; set; }
     }
 }

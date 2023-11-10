@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -27,10 +28,10 @@ namespace Udemy.Doviz.Core
             {
                 ParaBirimleri.Add(new ParaBirimi()
                 {
-                    ID = reader.IsDBNull(0) ? Guid.Empty : reader.GetGuid(0),
-                    Code = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
-                    Tanim = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                    UyariLimit = reader.IsDBNull(3) ? 0 : reader.GetDecimal(3)
+                    ID          = reader.IsDBNull(0) ? Guid.Empty   : reader.GetGuid(0),
+                    Code        = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+                    Tanim       = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+                    UyariLimit  = reader.IsDBNull(3) ? 0            : reader.GetDecimal(3)
                 });
             }
             reader.Close();
@@ -132,14 +133,15 @@ namespace Udemy.Doviz.Core
             DLL.ConnectionOperation();
             return KurGecmisListe;
         }
-        public void KurKayitEkle(Guid ID, Guid ParaBirimiID, decimal Satis, decimal Alis, decimal Degisim, decimal d_oran, string d_yon, DateTime OlusturmaTarihi)
+        public void KurKayitEkle(Guid ID, Guid ParaBirimiID, string Satis, string Alis, string Degisim, string d_oran, string d_yon, DateTime OlusturmaTarihi)
         {
-            if(ID != Guid.Empty 
-                && ParaBirimiID != Guid.Empty 
-                && Satis != 0
-                && Alis != 0
-                && Degisim != 0
-                && d_oran != 0
+       
+            if (ID != Guid.Empty 
+                && ParaBirimiID != Guid.Empty
+                && Satis != string.Empty
+                && Alis != string.Empty
+                && Degisim != string.Empty
+                && d_oran != string.Empty   
                 && d_yon != string.Empty
                 && OlusturmaTarihi > DateTime.MinValue)
             {
@@ -147,10 +149,10 @@ namespace Udemy.Doviz.Core
                 {
                     ID = ID,
                     ParaBirimiID = ParaBirimiID,
-                    Satis = Satis,
-                    Alis = Alis,
-                    Degisim = Degisim,
-                    d_oran = d_oran,
+                    Satis = decimal.Parse(Satis, CultureInfo.InvariantCulture),
+                    Alis = decimal.Parse(Alis,CultureInfo.InvariantCulture),
+                    Degisim = decimal.Parse(Degisim, CultureInfo.InvariantCulture),
+                    d_oran = decimal.Parse(d_oran, CultureInfo.InvariantCulture),
                     d_yon = d_yon,
                     OlusturmaTarihi = OlusturmaTarihi
                 });
@@ -165,17 +167,31 @@ namespace Udemy.Doviz.Core
         {
             WebClient webClient = new WebClient();
             string JsonDataTxt = webClient.DownloadString("https://api.genelpara.com/embed/doviz.json");
-            Dictionary<string, JsonDataType> dovizKurlari = JsonConvert.DeserializeObject<Dictionary<string, JsonDataType>>(JsonDataTxt);
+            // Videoda anlatılan API'dan gelen veriler daha farklı olduğu için biz burada daha farklı bir yoldan devam edeceğiz..
+            List<KeyValuePair<string, JsonDataType>> DovizKurBilgileri = JsonConvert.DeserializeObject<Dictionary<string, JsonDataType>>(JsonDataTxt).ToList();
 
-            List<ParaBirimi> ParaBirimiListe = new List<ParaBirimi>();
+            List<ParaBirimi> ParaBirimiListe = ParaBirimiListesi();
 
-            for (int i = 0; i < dovizKurlari.Count; i++)
+            for (int i = 0; i < ParaBirimiListe.Count; i++)
             {
-                JsonDataType BulunanKur = dovizKurlari.FirstOrDefault(I => I.Key == ParaBirimiListe[i].Code);
+                JsonDataType bulunanKur = DovizKurBilgileri.FirstOrDefault(I => I.Key == ParaBirimiListe[i].Code).Value;
+                KurKayitEkle(Guid.NewGuid(),
+                            ParaBirimiListe[i].ID,
+                            bulunanKur.satis,
+                            bulunanKur.alis,
+                            bulunanKur.degisim,
+                            bulunanKur.d_oran,
+                            bulunanKur.d_yon,
+                            DateTime.Now
+                            );
             }
-            
-            // JsonDataType DovizKurBilgileri = JsonConvert.DeserializeObject<JsonDataType>(JsonDataTxt);
-            
+
+            //foreach (var item in ParaBirimiListe)
+            //{
+            //    JsonDataType foundData = dovizKurlari.FirstOrDefault(I => I.Key == item.Code).Value;
+            //}
+            //JsonDataType DovizKurBilgileri = JsonConvert.DeserializeObject<JsonDataType>(JsonDataTxt);
+
         }
     }
 }

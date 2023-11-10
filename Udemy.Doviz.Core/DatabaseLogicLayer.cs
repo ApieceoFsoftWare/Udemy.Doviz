@@ -11,15 +11,14 @@ namespace Udemy.Doviz.Core
 {
     public class DatabaseLogicLayer : BaseClass
     {
-        SqlConnection _connection;
-        SqlCommand _command;
-        SqlDataReader _reader;
-        int ReturnValues;
+        SqlConnection   _connection;
+        SqlCommand      _command;
+        SqlDataReader   _reader;
         string MachineName = Environment.MachineName;
 
         public DatabaseLogicLayer()
         {   // Bu Bağlantı metodu local veritabanı için geçerlidir. Değiştirmek istersen değiştirebilirsin :D
-            _command = new SqlCommand($"Server={MachineName}\\SQLEXPRESS; Initial Catalog = UdemyDoviz; Integrated Security = True");
+            _connection = new SqlConnection($"Server={MachineName}\\SQLEXPRESS; Initial Catalog = UdemyDoviz; Integrated Security = True");
         }
         public void ConnectionOperation()
         {
@@ -92,7 +91,8 @@ namespace Udemy.Doviz.Core
                 _command = new SqlCommand("KurKayitEkle", _connection);
                 _command.CommandType = CommandType.StoredProcedure;
                 _command.Parameters.Add("@ID",              SqlDbType.UniqueIdentifier).Value = kur.ID;
-                _command.Parameters.Add("@ParaBirimi",      SqlDbType.UniqueIdentifier).Value = kur.ParaBirimiID;
+                _command.Parameters.Add("@KurID",           SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
+                _command.Parameters.Add("@ParaBirimiID",    SqlDbType.UniqueIdentifier).Value = kur.ParaBirimiID;
                 _command.Parameters.Add("@Satis",           SqlDbType.Decimal).Value = kur.Satis;
                 _command.Parameters.Add("@Alis",            SqlDbType.Decimal).Value = kur.Alis;
                 _command.Parameters.Add("@Degisim",         SqlDbType.Decimal).Value = kur.d_oran;
