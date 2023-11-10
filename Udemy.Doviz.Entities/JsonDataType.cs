@@ -8,10 +8,10 @@ namespace Udemy.Doviz.Entities
 {
     public class JsonDataType
     {
-        public string satis { get; set; }
-        public string alis { get; set; }
-        public string degisim { get; set; }
-        public string d_oran { get; set; }
-        public string d_yon { get; set; }
+        public string satis     { get; set; }
+        public string alis      { get; set; }
+        public string degisim   { get; set; }
+        public string d_oran    { get; set; }
+        public string d_yon     { get; set; }
     }
 }

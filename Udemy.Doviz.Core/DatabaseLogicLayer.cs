@@ -91,13 +91,13 @@ namespace Udemy.Doviz.Core
             {
                 _command = new SqlCommand("KurKayitEkle", _connection);
                 _command.CommandType = CommandType.StoredProcedure;
-                _command.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = kur.ID;
-                _command.Parameters.Add("@ParaBirimi", SqlDbType.UniqueIdentifier).Value = kur.ParaBirimiID;
-                _command.Parameters.Add("@Satis", SqlDbType.Decimal).Value = kur.Satis;
-                _command.Parameters.Add("@Alis", SqlDbType.Decimal).Value = kur.Alis;
-                _command.Parameters.Add("@Degisim", SqlDbType.Decimal).Value = kur.d_oran;
-                _command.Parameters.Add("@d_oran", SqlDbType.Decimal).Value = kur.d_oran;
-                _command.Parameters.Add("@d_yon", SqlDbType.NVarChar).Value = kur.d_yon;
+                _command.Parameters.Add("@ID",              SqlDbType.UniqueIdentifier).Value = kur.ID;
+                _command.Parameters.Add("@ParaBirimi",      SqlDbType.UniqueIdentifier).Value = kur.ParaBirimiID;
+                _command.Parameters.Add("@Satis",           SqlDbType.Decimal).Value = kur.Satis;
+                _command.Parameters.Add("@Alis",            SqlDbType.Decimal).Value = kur.Alis;
+                _command.Parameters.Add("@Degisim",         SqlDbType.Decimal).Value = kur.d_oran;
+                _command.Parameters.Add("@d_oran",          SqlDbType.Decimal).Value = kur.d_oran;
+                _command.Parameters.Add("@d_yon",           SqlDbType.NVarChar).Value = kur.d_yon;
                 _command.Parameters.Add("@OlusturmaTarihi", SqlDbType.DateTime).Value = kur.OlusturmaTarihi;
 
                 ConnectionOperation();

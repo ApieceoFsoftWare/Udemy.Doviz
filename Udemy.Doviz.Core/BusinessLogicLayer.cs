@@ -165,8 +165,17 @@ namespace Udemy.Doviz.Core
         {
             WebClient webClient = new WebClient();
             string JsonDataTxt = webClient.DownloadString("https://api.genelpara.com/embed/doviz.json");
-            JsonDataType DovizKurBilgileri = JsonConvert.DeserializeObject<JsonDataType>(JsonDataTxt);
-            Console.WriteLine(DovizKurBilgileri);
+            Dictionary<string, JsonDataType> dovizKurlari = JsonConvert.DeserializeObject<Dictionary<string, JsonDataType>>(JsonDataTxt);
+
+            List<ParaBirimi> ParaBirimiListe = new List<ParaBirimi>();
+
+            for (int i = 0; i < dovizKurlari.Count; i++)
+            {
+                JsonDataType BulunanKur = dovizKurlari.FirstOrDefault(I => I.Key == ParaBirimiListe[i].Code);
+            }
+            
+            // JsonDataType DovizKurBilgileri = JsonConvert.DeserializeObject<JsonDataType>(JsonDataTxt);
+            
         }
     }
 }
