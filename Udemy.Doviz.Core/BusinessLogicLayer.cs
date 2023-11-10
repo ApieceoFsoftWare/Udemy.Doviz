@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Udemy.Doviz.Entities;
@@ -155,9 +157,16 @@ namespace Udemy.Doviz.Core
             }
             else
             {
-                // Ekleme işlemini gerçekleştiremedik ... 
+                // Ekleme işlemini gerçekleştiremediğimiz case...
             }
         }
 
+        public void KurBilgileriniGuncelle()
+        {
+            WebClient webClient = new WebClient();
+            string JsonDataTxt = webClient.DownloadString("https://api.genelpara.com/embed/doviz.json");
+            JsonDataType DovizKurBilgileri = JsonConvert.DeserializeObject<JsonDataType>(JsonDataTxt);
+            Console.WriteLine(DovizKurBilgileri);
+        }
     }
 }

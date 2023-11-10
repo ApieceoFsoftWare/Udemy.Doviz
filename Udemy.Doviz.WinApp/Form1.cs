@@ -16,5 +16,11 @@ namespace Udemy.Doviz.WinApp
         {
             InitializeComponent();
         }
+
+        private void btn_Json_Kurgu_Click(object sender, EventArgs e)
+        {
+            Udemy.Doviz.Core.BusinessLogicLayer BLL = new Core.BusinessLogicLayer();
+            BLL.KurBilgileriniGuncelle();
+        }
     }
 }

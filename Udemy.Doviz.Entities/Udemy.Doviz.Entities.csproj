@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonDataType.cs" />
     <Compile Include="Kur.cs" />
     <Compile Include="KurGecmisi.cs" />
     <Compile Include="ParaBirimi.cs" />
