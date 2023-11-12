@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Udemy.Doviz.Entities;
@@ -170,23 +171,33 @@ namespace Udemy.Doviz.Core
         {
             WebClient webClient = new WebClient();
             string JsonDataTxt = webClient.DownloadString("https://api.genelpara.com/embed/doviz.json");
-            // Videoda anlatılan API'dan gelen veriler daha farklı olduğu için biz burada daha farklı bir yoldan devam edeceğiz..
+            // Videoda anlatılan API'dan gelen veriler array şeklinde olduğu için ve o api artık olmadığı için biz burada daha farklı bir yoldan devam edeceğiz..
+            // Aşağıdaki kullanımı incelemenizi ve debug atıp verilerin nasıl geldiğini görmenizi tavsiye ederim.
             List<KeyValuePair<string, JsonDataType>> DovizKurBilgileri = JsonConvert.DeserializeObject<Dictionary<string, JsonDataType>>(JsonDataTxt).ToList();
 
             List<ParaBirimi> ParaBirimiListe = ParaBirimiListesi();
 
             for (int i = 0; i < ParaBirimiListe.Count; i++)
             {
-                JsonDataType bulunanKur = DovizKurBilgileri.FirstOrDefault(I => I.Key == ParaBirimiListe[i].Code).Value;
+                JsonDataType BulunanKur = DovizKurBilgileri.FirstOrDefault(I => I.Key == ParaBirimiListe[i].Code).Value;
                 KurKayitEkle(Guid.NewGuid(),
                             ParaBirimiListe[i].ID,
-                            bulunanKur.satis,
-                            bulunanKur.alis,
-                            bulunanKur.degisim,
-                            bulunanKur.d_oran,
-                            bulunanKur.d_yon,
+                            BulunanKur.satis,
+                            BulunanKur.alis,
+                            BulunanKur.degisim,
+                            BulunanKur.d_oran,
+                            BulunanKur.d_yon,
                             DateTime.Now
                             );
+                if(decimal.Parse(BulunanKur.satis) <= ParaBirimiListe[i].UyariLimit && ParaBirimiListe[i].UyariLimit != 0)
+                {
+                    // Buradaki if şartı true olduğu zaman email göndereceğiz...
+                    ControlException(() =>
+                    {
+                        EmailGonder(BulunanKur, ParaBirimiListe[i]);
+                    });
+                }
+
             }
 
             //foreach (var item in ParaBirimiListe)
@@ -209,18 +220,56 @@ namespace Udemy.Doviz.Core
             List<KurGecmis> KurGecmisList = KurGecmisListe();
             List<ParaBirimi> ParaBirimList = ParaBirimiListesi();
 
-            foreach (var item in KurGecmisList)
+            for (int i = 0; i < KurGecmisList.Count; i++)
             {
                 dataTable.Rows.Add(
-                    ParaBirimList.FirstOrDefault(I => I.ID == item.ID).Tanim,
-                    ParaBirimList.FirstOrDefault(I => I.ID == item.ID).Code,
-                    item.Satis.ToString(),
-                    item.Alis.ToString(),
-                    item.OlusturmaTarihi.ToString("dd.MM.yyyy hh:mm")
+                    ParaBirimList.FirstOrDefault(I => I.ID == KurGecmisList[i].ParaBirimiID).Tanim,
+                    ParaBirimList.FirstOrDefault(I => I.ID == KurGecmisList[i].ParaBirimiID).Code,
+                    KurGecmisList[i].Satis,
+                    KurGecmisList[i].Alis,
+                    KurGecmisList[i].OlusturmaTarihi.ToString("dd.MM.yyyy hh:mm")
                     );
             }
 
             return dataTable;
+        }
+        private void EmailGonder(JsonDataType dataType, ParaBirimi ParaBirimi)
+        {
+            // Buraya yazacağımız kodlar ile alakalı bilgileri github adresimdeki repolar içerisinden bulabilirsiniz. 
+            // Kolay ulaşım için link : https://github.com/ApieceoFsoftWare/ObservingEmailOperations
+
+            // Gmail Hesap Bilgileri
+            string username = "ozcanozanberkay@gmail.com";
+            string password = "..."; // Google App Şifresi 
+
+            // SMTP İstemci Oluşturma ve Ayarlama
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(username, password)
+            };
+
+            // Gönderici ve alıcı e-posta adresleri
+            string fromEmail    = "ozcanozanberkay@gmail.com";
+            string toEmail      = "ozanberkay34@gmail.com";
+            
+            // E-posta ileti oluşturma
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress(fromEmail);
+            mail.To.Add(toEmail);
+            mail.Subject = $"{ParaBirimi.Tanim} - ${ParaBirimi.UyariLimit} Değerinize ulaştı!";
+            mail.Body = $"{ParaBirimi.Tanim} - {ParaBirimi.UyariLimit} değerine {DateTime.Now.ToString()} tarihinde ulaştı! Alım yapabilirsiniz.";
+            mail.IsBodyHtml = true;
+
+            // Attachment ile mail gönderme, bunun için file name girmeniz gerekir. Ben bunu yorum satırı olarak bırakacağım gerisi size kalmış...
+            //mail.Attachments.Add(new Attachment(@"PutYourFileLocation"));
+
+            // E-posta iletilerini gönderme
+            smtp.Send(mail);
         }
     }
 }

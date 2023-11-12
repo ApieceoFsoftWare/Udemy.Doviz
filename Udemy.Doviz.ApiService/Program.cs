@@ -17,7 +17,7 @@ namespace Udemy.Doviz.ApiService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new DovizKurlariServisi()
             };
             ServiceBase.Run(ServicesToRun);
         }

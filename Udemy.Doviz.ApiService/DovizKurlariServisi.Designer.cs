@@ -1,6 +1,6 @@
 ﻿namespace Udemy.Doviz.ApiService
 {
-    partial class Service1
+    partial class DovizKurlariServisi
     {
         /// <summary> 
         /// Required designer variable.

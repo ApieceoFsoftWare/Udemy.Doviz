@@ -67,7 +67,7 @@ namespace Udemy.Doviz.Core
         {
             ControlException(() =>
             {
-                _command = new SqlCommand("SELECT * FROM KurGecmis");
+                _command = new SqlCommand("SELECT * FROM KurGecmis", _connection);
                 ConnectionOperation();
                 _reader = _command.ExecuteReader();
             });
