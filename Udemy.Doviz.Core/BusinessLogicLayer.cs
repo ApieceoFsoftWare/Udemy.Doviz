@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -49,13 +50,14 @@ namespace Udemy.Doviz.Core
             {
                 KurDegerleri.Add(new Kur()
                 {
-                    ID = reader.IsDBNull(0) ? Guid.Empty : reader.GetGuid(0),
-                    ParaBirimiID = reader.IsDBNull(1) ? Guid.Empty : reader.GetGuid(1),
-                    Satis = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
-                    Alis = reader.IsDBNull(3) ? 0 : reader.GetDecimal(3),
-                    d_oran = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4),
-                    d_yon = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
-                    OlusturmaTarihi = reader.IsDBNull(6) ? DateTime.MinValue : reader.GetDateTime(6)
+                    ID              = reader.IsDBNull(0) ? Guid.Empty : reader.GetGuid(0),
+                    ParaBirimiID    = reader.IsDBNull(1) ? Guid.Empty : reader.GetGuid(1),
+                    Satis           = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
+                    Alis            = reader.IsDBNull(3) ? 0 : reader.GetDecimal(3),
+                    Degisim         = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4),
+                    d_oran          = reader.IsDBNull(5) ? 0 : reader.GetDecimal(5),
+                    d_yon           = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                    OlusturmaTarihi = reader.IsDBNull(7) ? DateTime.MinValue : reader.GetDateTime(7)
                 });
             }
             reader.Close();
@@ -76,9 +78,10 @@ namespace Udemy.Doviz.Core
                     ParaBirimiID = reader.IsDBNull(1) ? Guid.Empty : reader.GetGuid(1),
                     Satis = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2),
                     Alis = reader.IsDBNull(3) ? 0 : reader.GetDecimal(3),
-                    d_oran = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4),
-                    d_yon = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
-                    OlusturmaTarihi = reader.IsDBNull(6) ? DateTime.MinValue : reader.GetDateTime(6)
+                    Degisim = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4),
+                    d_oran = reader.IsDBNull(5) ? 0 : reader.GetDecimal(5),
+                    d_yon = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                    OlusturmaTarihi = reader.IsDBNull(7) ? DateTime.MinValue : reader.GetDateTime(7)
                 };
             }
             reader.Close();
@@ -192,6 +195,32 @@ namespace Udemy.Doviz.Core
             //}
             //JsonDataType DovizKurBilgileri = JsonConvert.DeserializeObject<JsonDataType>(JsonDataTxt);
 
+        }
+
+        public DataTable KurGecmisGoruntule()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Doviz Tanım",        typeof(string));
+            dataTable.Columns.Add("Doviz Kod",          typeof(string));
+            dataTable.Columns.Add("Satış",              typeof(string));
+            dataTable.Columns.Add("Alış",               typeof(string));
+            dataTable.Columns.Add("Oluşturma Tarihi",   typeof(string));
+
+            List<KurGecmis> KurGecmisList = KurGecmisListe();
+            List<ParaBirimi> ParaBirimList = ParaBirimiListesi();
+
+            foreach (var item in KurGecmisList)
+            {
+                dataTable.Rows.Add(
+                    ParaBirimList.FirstOrDefault(I => I.ID == item.ID).Tanim,
+                    ParaBirimList.FirstOrDefault(I => I.ID == item.ID).Code,
+                    item.Satis.ToString(),
+                    item.Alis.ToString(),
+                    item.OlusturmaTarihi.ToString("dd.MM.yyyy hh:mm")
+                    );
+            }
+
+            return dataTable;
         }
     }
 }

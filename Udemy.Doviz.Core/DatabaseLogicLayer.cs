@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -31,7 +32,6 @@ namespace Udemy.Doviz.Core
                 _connection.Open();
             }
         }
-
         public SqlDataReader ParaBirimiListesi()
         {
             ControlException(() =>
@@ -46,7 +46,7 @@ namespace Udemy.Doviz.Core
         {
             ControlException(() =>
             {
-                _command = new SqlCommand("SELECT * FROM Kur");
+                _command = new SqlCommand("SELECT * FROM Kur", _connection);
                 ConnectionOperation();
                 _reader = _command.ExecuteReader();
             });
