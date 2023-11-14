@@ -12,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Udemy.Doviz.ApiService", "Udemy.Doviz.ApiService\Udemy.Doviz.ApiService.csproj", "{2E64F0FB-7EFF-4079-B365-106761B4F457}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TSQL", "TSQL", "{2E55B212-7990-49C4-8748-8FF8A4B5C6C7}"
+	ProjectSection(SolutionItems) = preProject
+		important.sql = important.sql
+		main.sql = main.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
